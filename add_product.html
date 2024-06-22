@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Add Product</title>
+     </head>
+  <body>
+    <div class="container mt-5">
+      <h2 class="text-center">Add Product</h2>
+      <form action="{{ url_for('add_product') }}" method="POST" enctype="multipart/form-data" class="mt-4">
+        <div class="form-group">
+          <label for="name">Product Name:</label>
+          <input type="text" id="name" name="name" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="category">Category:</label>
+          <input type="text" id="category" name="category" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="description">Description:</label>
+          <textarea id="description" name="description" class="form-control"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="price">Price:</label>
+          <input type="number" id="price" name="price" step="0.01" class="form-control" required>
+        </div>
+        <div class="form-group form-check">
+          <input type="checkbox" id="available" name="available" class="form-check-input">
+          <label for="available" class="form-check-label">Available</label>
+        </div>
+        <div class="form-group">
+          <label for="image">Product Image:</label>
+          <input type="file" id="image" name="image" class="form-control-file">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Add Product</button>
+      </form>
+    </div>
+
+    </body>
+</html>
