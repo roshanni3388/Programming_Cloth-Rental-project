@@ -14,12 +14,6 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 # Database models
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
-    password = db.Column(db.String(120), nullable=False)
-    area_code = db.Column(db.String(10), nullable=False)
-    is_admin = db.Column(db.Boolean, default=False)
 
 class Admin(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -27,27 +21,7 @@ class Admin(db.Model):
     password = db.Column(db.String(120), nullable=False)
     area_code = db.Column(db.String(10), nullable=False)
 
-class Product(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80), nullable=False)
-    category = db.Column(db.String(80), nullable=False)
-    subcategory = db.Column(db.String(50), nullable=False)
-    age_group = db.Column(db.String(50), nullable=False)
-    description = db.Column(db.Text, nullable=True)
-    price = db.Column(db.Float, nullable=False)
-    available = db.Column(db.Boolean, default=True)
-    image = db.Column(db.String(120), nullable=True)
 
-class Order(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
-    start_date = db.Column(db.Date, nullable=False)
-    end_date = db.Column(db.Date, nullable=False)
-    total_cost = db.Column(db.Float, nullable=False)
-    status = db.Column(db.String(20), nullable=False, default='Ongoing')
-    product = db.relationship('Product', backref=db.backref('orders', lazy=True))
-    user = db.relationship('User', backref=db.backref('orders', lazy=True))
 
 # Routes
 @app.route('/')
