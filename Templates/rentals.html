@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Product Rental Service</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.min.css') }}">
+    <!-- Custom styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+      body {
+        padding-top: 60px;
+      }
+      header {
+        background-color: #f8f9fa;
+        padding: 20px 0;
+        border-bottom: 1px solid #e0e0e0;
+      }
+      header h1 {
+        margin: 0;
+      }
+      header nav ul {
+        list-style: none;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+      }
+      header nav ul li {
+        margin: 0 15px;
+      }
+      header nav ul li a {
+        text-decoration: none;
+        color: #007bff;
+        font-weight: bold;
+      }
+      main {
+        padding: 20px;
+      }
+      main h2 {
+        margin-bottom: 20px;
+      }
+      main ul {
+        list-style: none;
+        padding: 0;
+      }
+      main ul li {
+        background-color: #f8f9fa;
+        margin-bottom: 20px;
+        padding: 15px;
+        border: 1px solid #e0e0e0;
+        border-radius: 5px;
+      }
+      main ul li h3 {
+        margin: 0 0 10px 0;
+      }
+      main ul li form {
+        margin-top: 10px;
+      }
+      footer {
+        text-align: center;
+        padding: 20px 0;
+        background-color: #f8f9fa;
+        border-top: 1px solid #e0e0e0;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <h1 class="text-center">Welcome to Product Rental Service</h1>
+        <nav>
+          <ul class="nav justify-content-center">
+            <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="/products">Products</a></li>
+            {% if session.get('user_id') %}
+              <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
+            {% else %}
+              <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
+              <li class="nav-item"><a class="nav-link" href="/register">Register</a></li>
+              <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_login') }}">Admin Login</a></li>
+              <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_register') }}">Admin Register</a></li>
+            {% endif %}
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main class="container">
+      <h2>Your Rentals</h2>
+      {% if rentals %}
+        <ul>
+          {% for rental in rentals %}
+            <li>
+              <h3>{{ rental.product.name }}</h3>
+              <p>Start Date: {{ rental.start_date.strftime('%Y-%m-%d') }}</p>
+              <p>End Date: {{ rental.end_date.strftime('%Y-%m-%d') }}</p>
+              <p>Total Cost: ${{ rental.total_cost }}</p>
+              <p>Status: {{ rental.status }}</p>
+              <form method="post" action="{{ url_for('return_rental', rental_id=rental.id) }}">
+                <button type="submit" class="btn btn-danger">Return</button>
+              </form>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p>You have no current rentals.</p>
+      {% endif %}
+    </main>
+    <footer>
+      <p>&copy; 2024 Product Rental Service</p>
+    </footer>
