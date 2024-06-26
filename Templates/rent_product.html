@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rent Product</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 50%;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        form {
+            width: 80%;
+            margin: 0 auto;
+        }
+        label {
+            font-weight: bold;
+        }
+        input[type="date"],
+        input[type="number"],
+        button {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .error {
+            color: red;
+            display: none;
+        }
+    </style>
+    </head>
+<body>
+    <div class="container">
+        <h1>Rent Product</h1>
+        <h2>Product Name: {{ product.name }}</h2>
+        <h2>Description: {{ product.description }}</h2>
+        <h2>Price per day: ${{ product.price }}</h2>
+        <form method="post">
+            <label for="start_date">Start Date:</label><br>
+            <input type="date" id="start_date" name="start_date" required onchange="calculateTotalCost()"><br><br>
+            
+            <label for="end_date">End Date:</label><br>
+            <input type="date" id="end_date" name="end_date" required onchange="calculateTotalCost()"><br><br>
+            
+            <label for="total_cost">Total Cost:</label><br>
+            <input type="number" id="total_cost" name="total_cost" step="0.01" required readonly><br><br>
+            
+            <div class="error" id="error-message"></div>
+            
+            <button type="submit">Rent</button>
+        </form>
+    </div>
+</body>
+</html>
