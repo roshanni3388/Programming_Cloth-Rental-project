@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buy Product</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='responsive.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='images/fevicon.png') }}" type="image/gif">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        nav ul li {
+            display: inline;
+            margin-right: 10px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+        }
+
+        main {
+            padding: 20px;
+            text-align: center;
+        }
+
+        form {
+            display: inline-block;
+            text-align: left;
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px 0;
+            background-color: #333;
+            color: white;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .message {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Welcome to Product Rental Service</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/products">Products</a></li>
+                {% if session.get('user_id') %}
+                    <li><a href="/logout">Logout</a></li>
+                {% else %}
+                    <li><a href="/login">Login</a></li>
+                    <li><a href="/register">Register</a></li>
+                    <li><a href="{{ url_for('admin_login') }}">Admin Login</a></li>
+                    <li><a href="{{ url_for('admin_register') }}">Admin Register</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h2>Buy Product</h2>
+        {% if success_message %}
+            <div class="message">{{ success_message }}</div>
+        {% endif %}
+        <form method="post" action="{{ url_for('buy_product', product_id=product.id) }}" id="buyProductForm">
+            <label for="end_date">End Date:</label>
+            <input type="date" id="end_date" name="end_date" required>
+            <label for="total_cost">Total Cost:</label>
+            <input type="number" id="total_cost" name="total_cost" min="0" step="0.01" required readonly>
+            <button type="submit">Buy Product</button>
+        </form>
+    </main>
+    <footer>
+        <p>&copy; 2024 Product Rental Service</p>
+    </footer>
+    <script>
+        document.getElementById('end_date').addEventListener('change', function() {
+            const startDate = new Date();
+            const endDate = new Date(this.value);
+            const diffTime = Math.abs(endDate - startDate);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+            const pricePerDay = {{ product.price }};
+            const totalCost = diffDays * pricePerDay;
+
+            document.getElementById('total_cost').value = totalCost.toFixed(2);
+        });
+
+        const form = document.getElementById('buyProductForm');
+        form.addEventListener('submit', function(event) {
+            alert('Product purchased successfully!');
+        });
+    </script>
+</body>
+</html>
