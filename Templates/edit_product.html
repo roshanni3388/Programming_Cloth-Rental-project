@@ -1,37 +1,98 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="utf-8">
     <title>Edit Product</title>
-  </head>
-  <body>
-    <h2>Edit Product</h2>
-         <div>
-        <label for="name">Product Name:</label>
-        <input type="text" id="name" name="name" value="{{ product.name }}" required>
-      </div>
-      <div>
-        <label for="category">Category:</label>
-        <input type="text" id="category" name="category" value="{{ product.category }}" required>
-      </div>
-      <div>
-        <label for="description">Description:</label>
-        <textarea id="description" name="description">{{ product.description }}</textarea>
-      </div>
-      <div>
-        <label for="price">Price:</label>
-        <input type="number" id="price" name="price" step="0.01" value="{{ product.price }}" required>
-      </div>
-      <div>
-        <label for="available">Available:</label>
-        <input type="checkbox" id="available" name="available" {% if product.available %} checked {% endif %}>
-      </div>
-      <div>
-        <label for="image">Product Image:</label>
-        <input type="file" id="image" name="image">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        h2 {
+            text-align: center;
+        }
+        form {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        label {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="number"],
+        input[type="file"],
+        textarea {
+            width: 95%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        input[type="checkbox"] {
+            margin-left: 10px;
+        }
+        button {
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        img {
+            display: block;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    
+    <form action="{{ url_for('edit_product', id=product.id) }}" method="POST" enctype="multipart/form-data">
+      <h2>Edit Product</h2>
+        <div>
+            <label for="name">Product Name:</label>
+            <input type="text" id="name" name="name" value="{{ product.name }}" required>
         </div>
-      <button type="submit">Update Product</button>
+        <div>
+            <label for="category">Category:</label>
+            <input type="text" id="category" name="category" value="{{ product.category }}" required>
+        </div>
+        <div>
+            <label for="description">Description:</label>
+            <textarea id="description" name="description">{{ product.description }}</textarea>
+        </div>
+        <div>
+            <label for="price">Price:</label>
+            <input type="number" id="price" name="price" step="0.01" value="{{ product.price }}" required>
+        </div>
+        <div>
+            <label for="available">Available:</label>
+            <input type="checkbox" id="available" name="available" {% if product.available %} checked {% endif %}>
+        </div>
+        <div>
+            <label for="image">Product Image:</label>
+            <input type="file" id="image" name="image">
+            {% if product.image %}
+                <img src="{{ url_for('static', filename='uploads/' ~ product.image) }}" alt="{{ product.name }}" width="100">
+            {% endif %}
+        </div>
+        <button type="submit">Update Product</button>
     </form>
-  </body>
+</body>
 </html>
-<!--Reference used bootstrap docs-->

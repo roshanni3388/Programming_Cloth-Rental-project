@@ -52,7 +52,35 @@
             display: none;
         }
     </style>
-    </head>
+    <script>
+        function calculateTotalCost() {
+            var startDate = new Date(document.getElementById('start_date').value);
+            var endDate = new Date(document.getElementById('end_date').value);
+            var pricePerDay = {{ product.price }};
+            var today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            if (startDate && endDate && startDate <= endDate && startDate >= today) {
+                var timeDifference = endDate.getTime() - startDate.getTime();
+                var daysDifference = timeDifference / (1000 * 3600 * 24) + 1;
+                var totalCost = daysDifference * pricePerDay;
+                
+                document.getElementById('total_cost').value = totalCost.toFixed(2);
+                document.getElementById('error-message').style.display = 'none';
+            } else {
+                document.getElementById('total_cost').value = '';
+                if (startDate < today) {
+                    document.getElementById('error-message').innerText = 'Start date cannot be in the past.';
+                } else if (endDate < startDate) {
+                    document.getElementById('error-message').innerText = 'End date cannot be before start date.';
+                } else {
+                    document.getElementById('error-message').innerText = 'Please select valid dates.';
+                }
+                document.getElementById('error-message').style.display = 'block';
+            }
+        }
+    </script>
+</head>
 <body>
     <div class="container">
         <h1>Rent Product</h1>
