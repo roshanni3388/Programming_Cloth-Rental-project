@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <!-- basic -->
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <!-- mobile metas -->
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+      <!-- site metas -->
+      <title>Eflyer</title>
+      <meta name="keywords" content="">
+      <meta name="description" content="">
+      <meta name="author" content="">
+      <!-- bootstrap css -->
+    
+      <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.min.css') }}">
+      <!-- style css -->
+      
+      <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+      <!-- Responsive-->
+ 
+   </head>
+   <body>
+     <!-- banner bg main start -->
+     <div class="banner_bg_main">
+        <!-- header top section start -->
+        <div class="container">
+           <div class="header_section_top">
+              <div class="row">
+                 <div class="col-sm-12">
+                    <div class="custom_menu">
+                       <ul>
+                          <li><a href="#">Best Sellers</a></li>
+                          <li><a href="#">Gift Ideas</a></li>
+                          <li><a href="#">New Releases</a></li>
+                          <li><a href="#">Today's Deals</a></li>
+                          <li><a href="#">Customer Service</a></li>
+                       </ul>
+                    </div>
+                 </div>
+              </div>
+           </div>
+        </div>
+        <!-- header top section start -->
+        <!-- logo section start -->
+        <div class="logo_section">
+           <div class="container">
+              <div class="row">
+                 <div class="col-sm-12">
+                    <div class="logo"><a href="/products"><img src="{{ url_for('static', filename='images/logo.png') }}"></a></div>
+                 </div>
+              </div>
+           </div>
+        </div>
+        <!-- logo section end -->
+     <!-- header section start -->
+     <div class="header_section">
+        <div class="container">
+           <div class="containt_main">
+              <div id="mySidenav" class="sidenav">
+                 <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+                 <a href="/">Home</a>
+                 <a href="/products">Products</a>
+                 {% if session.get('user_id') %}
+                 <a href="/logout">Logou</a>
+                 {% else %}
+                 <a href="/login">Login</a>
+                 <a href="/register">Register</a>
+                 <a href="{{ url_for('admin_login') }}">Admin Login</a>
+                 <a href="{{ url_for('admin_register') }}">Admin Register</a>
+                 {% endif %}
