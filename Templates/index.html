@@ -13,14 +13,7 @@
       <meta name="keywords" content="">
       <meta name="description" content="">
       <meta name="author" content="">
-      <!-- bootstrap css -->
-    
-      <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.min.css') }}">
-      <!-- style css -->
-      
-      <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-      <!-- Responsive-->
- 
+   
    </head>
    <body>
      <!-- banner bg main start -->
@@ -71,3 +64,133 @@
                  <a href="{{ url_for('admin_login') }}">Admin Login</a>
                  <a href="{{ url_for('admin_register') }}">Admin Register</a>
                  {% endif %}
+
+
+              </div>
+             
+              <span class="toggle_icon" onclick="openNav()"><img src="{{ url_for('static', filename='images/toggle-icon.png') }}"></span>
+              
+              
+              <div class="main">
+                 <!-- Another variation with a button -->
+                 <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Search this blog">
+                    <div class="input-group-append">
+                       <button class="btn btn-secondary" type="button" style="background-color: #f26522; border-color:#f26522 ">
+                       <i class="fa fa-search"></i>
+                       </button>
+                    </div>
+                 </div>
+              </div>
+              <div class="header_box">
+                
+                 <div class="login_menu">
+                    <ul>
+                       <li><a href="/rentals">
+                          <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+                          <span class="padding_10">rentals</span></a>
+                       </li>
+                       <li><a href="/login">
+                          <i class="fa fa-user" aria-hidden="true"></i>
+                          <span class="padding_10">login</span></a>
+                       </li>
+                    </ul>
+                 </div>
+              </div>
+           </div>
+        </div>
+     </div>
+     <!-- header section end -->
+     <!-- banner section start -->
+     <div class="banner_section layout_padding">
+        <div class="container">
+           <div id="my_slider" class="carousel slide" data-ride="carousel">
+              <div class="carousel-inner">
+                 <div class="carousel-item active">
+                    <div class="row">
+                       <div class="col-sm-12">
+                          <h1 class="banner_taital">Get Start <br>Your favriot shoping</h1>
+                          <div class="buynow_bt"><a href="/products">Buy Now</a></div>
+                       </div>
+                    </div>
+                 </div>
+                 <div class="carousel-item">
+                    <div class="row">
+                       <div class="col-sm-12">
+                          <h1 class="banner_taital">Get Start <br>Your favriot shoping</h1>
+                          <div class="buynow_bt"><a href="/products">Buy Now</a></div>
+                       </div>
+                    </div>
+                 </div>
+                 <div class="carousel-item">
+                    <div class="row">
+                       <div class="col-sm-12">
+                          <h1 class="banner_taital">Get Start <br>Your favriot shoping</h1>
+                          <div class="buynow_bt"><a href="/products">Buy Now</a></div>
+                       </div>
+                    </div>
+                 </div>
+              </div>
+              <a class="carousel-control-prev" href="#my_slider" role="button" data-slide="prev">
+              <i class="fa fa-angle-left"></i>
+              </a>
+              <a class="carousel-control-next" href="#my_slider" role="button" data-slide="next">
+              <i class="fa fa-angle-right"></i>
+              </a>
+           </div>
+        </div>
+     </div>
+     <!-- banner section end -->
+     <div class="fashion_section">
+      <div id="main_slider" class="carousel slide" data-ride="carousel">
+          <div class="carousel-inner">
+              <div class="carousel-item active">
+               <div class="container">
+                  
+               <h1 class="fashion_taital">
+
+                  <br>
+                           <h2>Welcome to Product Rental Service</h2>
+                           <p>We offer a wide range of products for rent and purchase, categorized for various events and age groups.</p>
+                           <p>To start, please browse our <b><a href="/products">Products</a> </b>or log in to your account.</p>
+                     
+                     {% if session.get('user_id') %}
+                           
+                              <h2>Your Account</h2>
+                              <p>Welcome back! You can view and manage your rentals <a href="/rentals">here</a>.</p>
+                           
+                     {% elif session.get('admin_id') %}
+                           
+                              <h2>Admin Dashboard</h2>
+                              <p>Welcome Admin! Manage products and orders <b><a href="{{ url_for('admin_dashboard') }}"></b>here</a>.</p>
+                        
+                     {% else %}
+                           
+                              <h2>Get Started</h2>
+                              <p>If you're new here, you can <a href="/register">Register</a> for a new account. Already have an account? <a href="/login">Log in</a>.</p>
+                           
+                     {% endif %}
+                  
+                  </h1>
+   </div>
+</div>
+</div>
+</div>
+</div>
+    <footer>
+        <p>&copy; 2024 Product Rental Service</p>
+    </footer>
+
+ 
+ 
+ <script>
+    function openNav() {
+      document.getElementById("mySidenav").style.width = "250px";
+    }
+    
+    function closeNav() {
+      document.getElementById("mySidenav").style.width = "0";
+    }
+ </script>
+</body>
+</html>
