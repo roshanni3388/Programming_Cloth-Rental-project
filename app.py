@@ -23,3 +23,32 @@ class Product(db.Model):
     price = db.Column(db.Float, nullable=False)
     available = db.Column(db.Boolean, default=True)
     image = db.Column(db.String(120), nullable=True)
+
+
+
+
+
+
+
+
+
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+
+        user = User.query.filter_by(username=username).first()
+
+        if user and check_password_hash(user.password, password):
+            session['user_id'] = user.id
+            if user.is_admin:
+                session['admin_id'] = user.id
+            flash('Login successful!', 'success')
+            return redirect(url_for('home'))
+        else:
+            flash('Invalid username or password. Please try again.', 'danger')
+
+    return render_template('login.html')
