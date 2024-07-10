@@ -127,3 +127,29 @@ def add_product():
         return redirect(url_for('admin_dashboard'))
 
     return render_template('add_product.html')
+
+@app.route('/rentals')
+def rentals():
+    if 'user_id' not in session:
+        flash('You need to log in to view your rentals.', 'warning')
+        return redirect(url_for('login'))
+
+    user_id = session['user_id']
+    user_rentals = Order.query.filter_by(user_id=user_id).all()
+    
+    return render_template('rentals.html', rentals=user_rentals)
+
+@app.route('/return_rental/<int:rental_id>', methods=['POST'])
+def return_rental(rental_id):
+    rental = Order.query.get_or_404(rental_id)
+    
+    if rental.user_id != session['user_id']:
+        flash('You are not authorized to return this rental.', 'danger')
+        return redirect(url_for('rentals'))
+
+    # Implement the return logic here : update or remove the rental
+    rental.status = 'Returned'
+    db.session.commit()
+
+    flash(f'Rental {rental.product.name} returned successfully!', 'success')
+    return redirect(url_for('rentals'))
