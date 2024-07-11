@@ -6,6 +6,20 @@ from werkzeug.utils import secure_filename
 import os
 from datetime import datetime
 
+# Database models
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    password = db.Column(db.String(120), nullable=False)
+    area_code = db.Column(db.String(10), nullable=False)
+    is_admin = db.Column(db.Boolean, default=False)
+
+class Admin(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    password = db.Column(db.String(120), nullable=False)
+    area_code = db.Column(db.String(10), nullable=False)
+
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
@@ -28,11 +42,7 @@ class Order(db.Model):
     product = db.relationship('Product', backref=db.backref('orders', lazy=True))
     user = db.relationship('User', backref=db.backref('orders', lazy=True))
 
-class Admin(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
-    password = db.Column(db.String(120), nullable=False)
-    area_code = db.Column(db.String(10), nullable=False)
+
 
 # Routes
 @app.route('/')
@@ -156,6 +166,33 @@ def add_product():
         return redirect(url_for('admin_dashboard'))
 
     return render_template('add_product.html')
+
+
+@app.route('/admin/edit_product/<int:id>', methods=['GET', 'POST'])
+def edit_product(id):
+    if 'admin_id' not in session:
+        return redirect(url_for('admin_login'))
+
+    product = Product.query.get_or_404(id)
+
+    if request.method == 'POST':
+        product.name = request.form['name']
+        product.category = request.form['category']
+        product.description = request.form['description']
+        product.price = float(request.form['price'])
+        product.available = True if request.form.get('available') else False
+        image = request.files['image']
+        
+        if image:
+            filename = secure_filename(image.filename)
+            image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            product.image = filename  # Save just the filename
+        
+        db.session.commit()
+        flash('Product updated successfully!', 'success')
+        return redirect(url_for('admin_dashboard'))
+
+    return render_template('edit_product.html', product=product)
 
 @app.route('/rentals')
 def rentals():
