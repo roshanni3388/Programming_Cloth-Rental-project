@@ -28,6 +28,12 @@ class Order(db.Model):
     product = db.relationship('Product', backref=db.backref('orders', lazy=True))
     user = db.relationship('User', backref=db.backref('orders', lazy=True))
 
+class Admin(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    password = db.Column(db.String(120), nullable=False)
+    area_code = db.Column(db.String(10), nullable=False)
+
 # Routes
 @app.route('/')
 def home():
@@ -59,8 +65,31 @@ def logout():
     flash('You have been logged out.', 'info')
     return redirect(url_for('login'))
 
-@app.route('/admin/login', methods=['GET', 'POST'])
-def admin_login():
+@app.route('/admin/register', methods=['GET', 'POST'])
+def admin_register():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        area_code = request.form['area_code']
+
+        # Hash the password
+        hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
+
+        # Create new admin user
+        new_admin = Admin(username=username, password=hashed_password, area_code=area_code)
+        
+        try:
+            db.session.add(new_admin)
+            db.session.commit()
+            flash('Admin registration successful! Please log in.', 'success')
+            return redirect(url_for('admin_login'))
+        except:
+            flash('Username already exists. Please choose a different username.', 'danger')
+
+    return render_template('admin_register.html')
+
+    @app.route('/admin/login', methods=['GET', 'POST'])
+    def admin_login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -127,3 +156,30 @@ def add_product():
         return redirect(url_for('admin_dashboard'))
 
     return render_template('add_product.html')
+
+@app.route('/rentals')
+def rentals():
+    if 'user_id' not in session:
+        flash('You need to log in to view your rentals.', 'warning')
+        return redirect(url_for('login'))
+
+    user_id = session['user_id']
+    user_rentals = Order.query.filter_by(user_id=user_id).all()
+    
+    return render_template('rentals.html', rentals=user_rentals)
+
+@app.route('/return_rental/<int:rental_id>', methods=['POST'])
+def return_rental(rental_id):
+    rental = Order.query.get_or_404(rental_id)
+    
+    if rental.user_id != session['user_id']:
+        flash('You are not authorized to return this rental.', 'danger')
+        return redirect(url_for('rentals'))
+
+    # Implement the return logic here : update or remove the rental
+    rental.status = 'Returned'
+    db.session.commit()
+
+    flash(f'Rental {rental.product.name} returned successfully!', 'success')
+    return redirect(url_for('rentals'))
+
