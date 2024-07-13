@@ -249,6 +249,32 @@ def delete_product(id):
 
                 if end_date<start_date:
                     flash('End date cannot be in the past','danger')
+                    return redirect(url_for('buy_product',product_id=product.id))
+
+                    total_cost=float(request.form['total_cost'])
+                    new_order=Order(
+                        user_id=session['user_id']
+                        product_id=product.id
+                        start_date=start_date,
+                        end_date=end_date,
+                        total_cost=total_cost,
+                        status='Ongoing'
+                    )
+
+                    db.session.add(new_order)
+                    db.session.commit()
+
+                    flash(f'Product{product.name} bought successfully!','success')
+                    return redirect(url_for('products'))
+            except KeyError:
+                flash('Form Submission error:missing fields.', 'danger')
+            except ValueError:
+                flash('Invalid input for date or cost.','danger')
+            return render_template('buy_product.html',product=product)
+        
+        if __name__=='__main__':
+            app.run(debug=true)
+
     
 
 
