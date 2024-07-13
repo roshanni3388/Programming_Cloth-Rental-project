@@ -49,6 +49,27 @@ class Order(db.Model):
 def home():
     return render_template('index.html')
 
+    @app.route('/register', methods=['GET', 'POST'])
+    def register():
+        if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        area_code = request.form['area_code']
+        
+        hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
+
+        new_user = User(username=username, password=hashed_password, area_code=area_code)
+        
+        try:
+            db.session.add(new_user)
+            db.session.commit()
+            flash('Registration successful! Please log in.', 'success')
+            return redirect(url_for('login'))
+        except:
+            flash('Username already exists. Please choose a different username.', 'danger')
+
+    return render_template('register.html')
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
