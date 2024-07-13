@@ -220,7 +220,7 @@ def return_rental(rental_id):
     flash(f'Rental {rental.product.name} returned successfully!', 'success')
     return redirect(url_for('rentals'))
 
-@app.route('/admin/delete_product/<init:id>',methods=['POST'])
+    @app.route('/admin/delete_product/<init:id>',methods=['POST'])
 def delete_product(id):
     if 'admin_id' not in session:
         return redirect(url_for('admin_login'))
@@ -237,5 +237,20 @@ def delete_product(id):
     db.session.commit()
     flash('Product deleted successfully!', 'success')
     return redirect(url_for('admin_dashboard'))
+
+    @app.route('/buy_product/<init:id>',methods=['GET','POST'])
+    def buy_product(product_id):
+        product= Product.query.get_or_404(productid)
+        if request.method=='POST':
+            try:
+                end_date_str=request.form['end_date']
+                end_date=datetime.strptime(end_date_str,'%Y-%m-%d').date()
+                startdate=datetime.now().date()
+
+                if end_date<start_date:
+                    flash('End date cannot be in the past','danger')
+    
+
+
 
 
