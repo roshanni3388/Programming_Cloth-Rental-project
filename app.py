@@ -100,7 +100,7 @@ def admin_register():
 
     @app.route('/admin/login', methods=['GET', 'POST'])
     def admin_login():
-    if request.method == 'POST':
+     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
 
@@ -219,4 +219,20 @@ def return_rental(rental_id):
 
     flash(f'Rental {rental.product.name} returned successfully!', 'success')
     return redirect(url_for('rentals'))
+
+@app.route('/admin/delete_product/<init:id>',methods=['POST'])
+def delete_product(id):
+    if 'admin_id' not in session:
+        return redirect(url_for('admin_login'))
+    product=Product.query.get_or_404(id)
+#deleting image file if it exists
+if Product.image:
+    image_path = os.path.join(app.config['UPLOAD_FOLDER'],Product.image)
+    if os.path.exists(image_path):
+        os.remove(image_path)
+    db.session.delete(Product)
+    db.session.commit()
+    flash('Product deleted successfully','Success')
+    return redirect(url_for('admin_dashboard'))
+
 
