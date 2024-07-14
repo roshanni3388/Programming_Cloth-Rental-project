@@ -6,6 +6,13 @@ from werkzeug.utils import secure_filename
 import os
 from datetime import datetime
 
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'your_secret_key'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+app.config['UPLOAD_FOLDER'] = 'static/uploads'
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
+
 # Database models
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
