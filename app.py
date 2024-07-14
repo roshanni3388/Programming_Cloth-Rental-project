@@ -9,6 +9,13 @@ from app import db
 
 
 
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'your_secret_key'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+app.config['UPLOAD_FOLDER'] = 'static/uploads'
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
+
 # Database models
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -53,10 +60,17 @@ class Order(db.Model):
         return render_template('index.html')
 
 
+<<<<<<< HEAD
         @app.route('/register', methods=['GET', 'POST'])
         def register():
             if request.method == 'POST':
                 username = request.form['username']
+=======
+    @app.route('/register', methods=['GET', 'POST'])
+    def register():
+     if request.method == 'POST':
+        username = request.form['username']
+>>>>>>> 16dfb369d9ed1e46cd4a68edf9463da5361dc01d
         password = request.form['password']
         area_code = request.form['area_code']
         
