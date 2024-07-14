@@ -49,7 +49,7 @@ class Order(db.Model):
     def home():
         return render_template('index.html')
 
-<<<<<<< HEAD
+
     @app.route('/register', methods=['GET', 'POST'])
     def register():
         if request.method == 'POST':
@@ -69,20 +69,20 @@ class Order(db.Model):
         except:
             flash('Username already exists. Please choose a different username.', 'danger')
 
-    return render_template('register.html')
+        return render_template('register.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-=======
+
     @app.route('/login', methods=['GET', 'POST'])
     def login():
         if request.method == 'POST':
             username = request.form['username']
             password = request.form['password']
->>>>>>> a0a8387f2da162c313fb6a13ce81ded6c67f96b7
+
 
         user = User.query.filter_by(username=username).first()
 
@@ -195,6 +195,22 @@ def login():
         return redirect(url_for('admin_dashboard'))
 
     return render_template('add_product.html')
+    @app.route('/rent_product/<int:product_id>', methods=['GET', 'POST'])
+    def rent_product(product_id):
+        product = Product.query.get_or_404(product_id)
+        if request.method == 'POST':
+            start_date = request.form['start_date']
+        end_date = request.form['end_date']
+        total_cost = float(request.form['total_cost'])  
+        new_order = Order(
+            user_id=session['user_id'],
+            product_id=product.id,
+            start_date=datetime.strptime(start_date, '%Y-%m-%d'),
+            end_date=datetime.strptime(end_date, '%Y-%m-%d'),
+            total_cost=total_cost
+        )
+
+        
 
 @app.route('/admin/edit_product/<int:id>', methods=['GET', 'POST'])
 def edit_product(id):
