@@ -59,7 +59,7 @@ class Order(db.Model):
 
     @app.route('/register', methods=['GET', 'POST'])
     def register():
-        if request.method == 'POST':
+     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
         area_code = request.form['area_code']
