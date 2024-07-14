@@ -5,9 +5,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 import os
 from datetime import datetime
-from app import db
-
-
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key'
@@ -55,15 +52,14 @@ class Order(db.Model):
 
 
 # Routes
-    @app.route('/')
-    def home():
-        return render_template('index.html')
+@app.route('/')
+def home():
+    return render_template('index.html')
 
-
-        @app.route('/register', methods=['GET', 'POST'])
-        def register():
-            if request.method == 'POST':
-                username = request.form['username']
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
         password = request.form['password']
         area_code = request.form['area_code']
         
@@ -79,19 +75,13 @@ class Order(db.Model):
         except:
             flash('Username already exists. Please choose a different username.', 'danger')
 
-        return render_template('register.html')
+    return render_template('register.html')
 
-        @app.route('/login', methods=['GET', 'POST'])
-        def login():
-            if request.method == 'POST':
-                username = request.form['username']
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
         password = request.form['password']
-
-        @app.route('/login', methods=['GET', 'POST'])
-        def login():
-            if request.method == 'POST':
-                username = request.form['username']
-            password = request.form['password']
 
 
         user = User.query.filter_by(username=username).first()
@@ -105,42 +95,18 @@ class Order(db.Model):
         else:
             flash('Invalid username or password. Please try again.', 'danger')
 
-            return render_template('login.html')
-
-        @app.route('/logout')
-        def logout():
-            session.pop('user_id', None)
+    return render_template('login.html')
+@app.route('/logout')
+def logout():
+        session.pop('user_id', None)
         session.pop('admin_id', None)
         flash('You have been logged out.', 'info')
         return redirect(url_for('login'))
 
-        @app.route('/admin/register', methods=['GET', 'POST'])
-        def admin_register():
-            if request.method == 'POST':
-                username = request.form['username']
-            password = request.form['password']
-            area_code = request.form['area_code']
-
-        # Hash the password
-        hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
-
-        # Create new admin user
-        new_admin = Admin(username=username, password=hashed_password, area_code=area_code)
-        
-        try:
-            db.session.add(new_admin)
-            db.session.commit()
-            flash('Admin registration successful! Please log in.', 'success')
-            return redirect(url_for('admin_login'))
-        except:
-            flash('Username already exists. Please choose a different username.', 'danger')
-
-        return render_template('admin_register.html')
-
-        @app.route('/admin/login', methods=['GET', 'POST'])
-        def admin_login():
-            if request.method == 'POST':
-                username = request.form['username']
+@app.route('/admin/login', methods=['GET', 'POST'])
+def admin_login():
+    if request.method == 'POST':
+        username = request.form['username']
         password = request.form['password']
 
         admin = Admin.query.filter_by(username=username).first()
@@ -153,24 +119,23 @@ class Order(db.Model):
             flash('Invalid admin username or password. Please try again.', 'danger')
 
         return render_template('admin_login.html')
+@app.route('/admin/logout')
+def admin_logout():
+    session.pop('admin_id', None)
+    flash('Admin logged out.', 'info')
+    return redirect(url_for('admin_login'))
 
-        @app.route('/admin/logout')
-        def admin_logout():
-            session.pop('admin_id', None)
-        flash('Admin logged out.', 'info')
+@app.route('/admin/dashboard')
+def admin_dashboard():
+    if 'admin_id' not in session:
         return redirect(url_for('admin_login'))
+    products = Product.query.all()
+    return render_template('admin_dashboard.html', products=products)
 
-        @app.route('/admin/dashboard')
-        def admin_dashboard():
-            if 'admin_id' not in session:
-                return redirect(url_for('admin_login'))
-        products = Product.query.all()
-        return render_template('admin_dashboard.html', products=products)
-
-        @app.route('/admin/add_product', methods=['GET', 'POST'])
-        def add_product():
-            if 'admin_id' not in session:
-                return redirect(url_for('admin_login'))
+@app.route('/admin/add_product', methods=['GET', 'POST'])
+def add_product():
+    if 'admin_id' not in session:
+        return redirect(url_for('admin_login'))
 
     if request.method == 'POST':
         name = request.form['name']
@@ -205,38 +170,15 @@ class Order(db.Model):
         return redirect(url_for('admin_dashboard'))
 
     return render_template('add_product.html')
-    
-    @app.route('/rent_product/<int:product_id>', methods=['GET', 'POST'])
-    def rent_product(product_id):
-            product = Product.query.get_or_404(product_id)
-    if request.method == 'POST':
-            start_date = request.form['start_date']
-            end_date = request.form['end_date']
-            total_cost = float(request.form['total_cost'])  
-            new_order = Order(
-            user_id=session['user_id'],
-            product_id=product.id,
-            start_date=datetime.strptime(start_date, '%Y-%m-%d'),
-            end_date=datetime.strptime(end_date, '%Y-%m-%d'),
-            total_cost=total_cost
-        )
-    db.session.add(new_order)
-    db.session.commit()
-        
-    flash(f'Product {product.name} rented successfully!', 'success')
-    return redirect(url_for('products'))
-    
-return render_template('rent_product.html', product=product)
-                
 
 @app.route('/admin/edit_product/<int:id>', methods=['GET', 'POST'])
 def edit_product(id):
-            if 'admin_id' not in session:
-                return redirect(url_for('admin_login'))
+    if 'admin_id' not in session:
+        return redirect(url_for('admin_login'))
 
-product = Product.query.get_or_404(id)
+    product = Product.query.get_or_404(id)
 
-if request.method == 'POST':
+    if request.method == 'POST':
         product.name = request.form['name']
         product.category = request.form['category']
         product.description = request.form['description']
@@ -253,38 +195,34 @@ if request.method == 'POST':
         flash('Product updated successfully!', 'success')
         return redirect(url_for('admin_dashboard'))
 
-return render_template('edit_product.html', product=product)
+    return render_template('edit_product.html', product=product)
 
-@app.route('/rentals')
-def rentals():
-            if 'user_id' not in session:
-                flash('You need to log in to view your rentals.', 'warning')
-            return redirect(url_for('login'))
+@app.route('/admin/register', methods=['GET', 'POST'])
+def admin_register():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        area_code = request.form['area_code']
 
-user_id = session['user_id']
-user_rentals = Order.query.filter_by(user_id=user_id).all()
-    
-    return render_template('rentals.html', rentals=user_rentals)
+        # Hash the password
+        hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
 
-    @app.route('/return_rental/<int:rental_id>', methods=['POST'])
-    def return_rental(rental_id):
-        rental = Order.query.get_or_404(rental_id)
-    
-    if rental.user_id != session['user_id']:
-        flash('You are not authorized to return this rental.', 'danger')
-        return redirect(url_for('rentals'))
-
-    # Implement the return logic here : update or remove the rental
-    rental.status = 'Returned'
-    db.session.commit()
-
-    flash(f'Rental {rental.product.name} returned successfully!', 'success')
-    return redirect(url_for('rentals'))
-
-    @app.route('/admin/delete_product/<init:id>',methods=['POST'])
-    def delete_product(id):
-        if 'admin_id' not in session:
+        # Create new admin user
+        new_admin = Admin(username=username, password=hashed_password, area_code=area_code)
+        
+        try:
+            db.session.add(new_admin)
+            db.session.commit()
+            flash('Admin registration successful! Please log in.', 'success')
             return redirect(url_for('admin_login'))
+        except:
+            flash('Username already exists. Please choose a different username.', 'danger')
+
+    return render_template('admin_register.html')
+@app.route('/admin/delete_product/<init:id>',methods=['POST'])
+def delete_product(id):
+    if 'admin_id' not in session:
+        return redirect(url_for('admin_login'))
     
     product = Product.query.get_or_404(id)
     
@@ -299,42 +237,110 @@ user_rentals = Order.query.filter_by(user_id=user_id).all()
     flash('Product deleted successfully!', 'success')
     return redirect(url_for('admin_dashboard'))
 
-    @app.route('/buy_product/<init:id>',methods=['GET','POST'])
-    def buy_product(product_id):
-        product= Product.query.get_or_404(productid)
-        if request.method=='POST':
-            try:
-                end_date_str=request.form['end_date']
-                end_date=datetime.strptime(end_date_str,'%Y-%m-%d').date()
-                startdate=datetime.now().date()
-
-                if end_date<start_date:
-                    flash('End date cannot be in the past','danger')
-                    return redirect(url_for('buy_product',product_id=product.id))
-
-                    total_cost=float(request.form['total_cost'])
-                    new_order=Order(
-                        user_id=session['user_id'],
-                        product_id=product.id,
-                        start_date=start_date,
-                        end_date=end_date,
-                        total_cost=total_cost,
-                        status='Ongoing'
-                    )
-
-                    db.session.add(new_order)
-                    db.session.commit()
-
-                    flash(f'Product{product.name} bought successfully!','success')
-                    return redirect(url_for('products'))
-            except KeyError:
-                flash('Form Submission error:missing fields.', 'danger')
-            except ValueError:
-                flash('Invalid input for date or cost.','danger')
-            return render_template('buy_product.html',product=product)
+@app.route('/products')
+def products():
+    event_category = request.args.get('event_category')
+    subcategory = request.args.get('subcategory')
+    age_group = request.args.get('age_group')
+    
+    query = Product.query
+    
+    if event_category:
+        query = query.filter_by(category=event_category)
+    if subcategory:
+        query = query.filter(Product.subcategory.ilike(f'%{subcategory}%'))
+    if age_group:
+        query = query.filter_by(age_group=age_group)
         
-        if __name__=='__main__':
-            app.run(debug=true)
+    products = query.all()
+    return render_template('products.html', products=products)
+
+@app.route('/rent_product/<int:product_id>', methods=['GET', 'POST'])
+def rent_product(product_id):
+    product = Product.query.get_or_404(product_id)
+
+    if request.method == 'POST':
+        start_date = request.form['start_date']
+        end_date = request.form['end_date']
+        total_cost = float(request.form['total_cost'])  
+        new_order = Order(
+            user_id=session['user_id'],
+            product_id=product.id,
+            start_date=datetime.strptime(start_date, '%Y-%m-%d'),
+            end_date=datetime.strptime(end_date, '%Y-%m-%d'),
+            total_cost=total_cost
+        )
+        db.session.add(new_order)
+        db.session.commit()
+        
+        flash(f'Product {product.name} rented successfully!', 'success')
+        return redirect(url_for('products'))
+    
+    return render_template('rent_product.html', product=product)
+
+@app.route('/rentals')
+def rentals():
+    if 'user_id' not in session:
+        flash('You need to log in to view your rentals.', 'warning')
+        return redirect(url_for('login'))
+
+    user_id = session['user_id']
+    user_rentals = Order.query.filter_by(user_id=user_id).all()
+    
+    return render_template('rentals.html', rentals=user_rentals)
+
+@app.route('/return_rental/<int:rental_id>', methods=['POST'])
+def return_rental(rental_id):
+    rental = Order.query.get_or_404(rental_id)
+    
+    if rental.user_id != session['user_id']:
+        flash('You are not authorized to return this rental.', 'danger')
+        return redirect(url_for('rentals'))
+
+    # Implement the return logic here : update or remove the rental
+    rental.status = 'Returned'
+    db.session.commit()
+
+    flash(f'Rental {rental.product.name} returned successfully!', 'success')
+    return redirect(url_for('rentals'))
+
+@app.route('/buy_product/<init:id>',methods=['GET','POST'])
+def buy_product(product_id):
+    product= Product.query.get_or_404(productid)
+    if request.method=='POST':
+        try:
+            end_date_str=request.form['end_date']
+            end_date=datetime.strptime(end_date_str,'%Y-%m-%d').date()
+            startdate=datetime.now().date()
+
+            if end_date<start_date:
+                flash('End date cannot be in the past','danger')
+                return redirect(url_for('buy_product',product_id=product.id))
+
+            total_cost = float(request.form['total_cost'])
+            new_order = Order(
+                user_id=session['user_id'],
+                product_id=product.id,
+                start_date=start_date,
+                end_date=end_date,
+                total_cost=total_cost,
+                status='Ongoing'
+            )
+
+
+            db.session.add(new_order)
+            db.session.commit()
+
+            flash(f'Product{product.name} bought successfully!','success')
+            return redirect(url_for('products'))
+        except KeyError:
+            flash('Form Submission error:missing fields.', 'danger')
+        except ValueError:
+            flash('Invalid input for date or cost.','danger')
+    return render_template('buy_product.html',product=product)
+
+if __name__=='__main__':
+    app.run(debug=true)
 
     
 
