@@ -5,6 +5,9 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 import os
 from datetime import datetime
+from app import db
+
+
 
 # Database models
 class User(db.Model):
@@ -50,10 +53,10 @@ class Order(db.Model):
         return render_template('index.html')
 
 
-    @app.route('/register', methods=['GET', 'POST'])
-    def register():
-        if request.method == 'POST':
-        username = request.form['username']
+        @app.route('/register', methods=['GET', 'POST'])
+        def register():
+            if request.method == 'POST':
+                username = request.form['username']
         password = request.form['password']
         area_code = request.form['area_code']
         
@@ -71,16 +74,16 @@ class Order(db.Model):
 
         return render_template('register.html')
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        username = request.form['username']
+        @app.route('/login', methods=['GET', 'POST'])
+        def login():
+            if request.method == 'POST':
+                username = request.form['username']
         password = request.form['password']
 
-    @app.route('/login', methods=['GET', 'POST'])
-    def login():
-        if request.method == 'POST':
-            username = request.form['username']
+        @app.route('/login', methods=['GET', 'POST'])
+        def login():
+            if request.method == 'POST':
+                username = request.form['username']
             password = request.form['password']
 
 
@@ -97,17 +100,17 @@ def login():
 
             return render_template('login.html')
 
-    @app.route('/logout')
-    def logout():
-        session.pop('user_id', None)
+        @app.route('/logout')
+        def logout():
+            session.pop('user_id', None)
         session.pop('admin_id', None)
         flash('You have been logged out.', 'info')
         return redirect(url_for('login'))
 
-    @app.route('/admin/register', methods=['GET', 'POST'])
-    def admin_register():
-        if request.method == 'POST':
-            username = request.form['username']
+        @app.route('/admin/register', methods=['GET', 'POST'])
+        def admin_register():
+            if request.method == 'POST':
+                username = request.form['username']
             password = request.form['password']
             area_code = request.form['area_code']
 
@@ -127,10 +130,10 @@ def login():
 
         return render_template('admin_register.html')
 
-    @app.route('/admin/login', methods=['GET', 'POST'])
-    def admin_login():
-     if request.method == 'POST':
-        username = request.form['username']
+        @app.route('/admin/login', methods=['GET', 'POST'])
+        def admin_login():
+            if request.method == 'POST':
+                username = request.form['username']
         password = request.form['password']
 
         admin = Admin.query.filter_by(username=username).first()
@@ -144,23 +147,23 @@ def login():
 
         return render_template('admin_login.html')
 
-    @app.route('/admin/logout')
-    def admin_logout():
-        session.pop('admin_id', None)
+        @app.route('/admin/logout')
+        def admin_logout():
+            session.pop('admin_id', None)
         flash('Admin logged out.', 'info')
         return redirect(url_for('admin_login'))
 
-    @app.route('/admin/dashboard')
-    def admin_dashboard():
-        if 'admin_id' not in session:
-            return redirect(url_for('admin_login'))
+        @app.route('/admin/dashboard')
+        def admin_dashboard():
+            if 'admin_id' not in session:
+                return redirect(url_for('admin_login'))
         products = Product.query.all()
         return render_template('admin_dashboard.html', products=products)
 
-    @app.route('/admin/add_product', methods=['GET', 'POST'])
-    def add_product():
-        if 'admin_id' not in session:
-            return redirect(url_for('admin_login'))
+        @app.route('/admin/add_product', methods=['GET', 'POST'])
+        def add_product():
+            if 'admin_id' not in session:
+                return redirect(url_for('admin_login'))
 
     if request.method == 'POST':
         name = request.form['name']
@@ -195,31 +198,38 @@ def login():
         return redirect(url_for('admin_dashboard'))
 
     return render_template('add_product.html')
+    
     @app.route('/rent_product/<int:product_id>', methods=['GET', 'POST'])
     def rent_product(product_id):
-        product = Product.query.get_or_404(product_id)
-        if request.method == 'POST':
+            product = Product.query.get_or_404(product_id)
+    if request.method == 'POST':
             start_date = request.form['start_date']
-        end_date = request.form['end_date']
-        total_cost = float(request.form['total_cost'])  
-        new_order = Order(
+            end_date = request.form['end_date']
+            total_cost = float(request.form['total_cost'])  
+            new_order = Order(
             user_id=session['user_id'],
             product_id=product.id,
             start_date=datetime.strptime(start_date, '%Y-%m-%d'),
             end_date=datetime.strptime(end_date, '%Y-%m-%d'),
             total_cost=total_cost
         )
-
+    db.session.add(new_order)
+    db.session.commit()
         
+    flash(f'Product {product.name} rented successfully!', 'success')
+    return redirect(url_for('products'))
+    
+return render_template('rent_product.html', product=product)
+                
 
 @app.route('/admin/edit_product/<int:id>', methods=['GET', 'POST'])
 def edit_product(id):
-    if 'admin_id' not in session:
-        return redirect(url_for('admin_login'))
+            if 'admin_id' not in session:
+                return redirect(url_for('admin_login'))
 
-    product = Product.query.get_or_404(id)
+product = Product.query.get_or_404(id)
 
-    if request.method == 'POST':
+if request.method == 'POST':
         product.name = request.form['name']
         product.category = request.form['category']
         product.description = request.form['description']
@@ -240,9 +250,9 @@ def edit_product(id):
 
     @app.route('/rentals')
     def rentals():
-        if 'user_id' not in session:
-            flash('You need to log in to view your rentals.', 'warning')
-        return redirect(url_for('login'))
+            if 'user_id' not in session:
+                flash('You need to log in to view your rentals.', 'warning')
+            return redirect(url_for('login'))
 
     user_id = session['user_id']
     user_rentals = Order.query.filter_by(user_id=user_id).all()
