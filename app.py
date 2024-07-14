@@ -60,17 +60,10 @@ class Order(db.Model):
         return render_template('index.html')
 
 
-<<<<<<< HEAD
         @app.route('/register', methods=['GET', 'POST'])
         def register():
             if request.method == 'POST':
                 username = request.form['username']
-=======
-    @app.route('/register', methods=['GET', 'POST'])
-    def register():
-     if request.method == 'POST':
-        username = request.form['username']
->>>>>>> 16dfb369d9ed1e46cd4a68edf9463da5361dc01d
         password = request.form['password']
         area_code = request.form['area_code']
         
@@ -260,16 +253,16 @@ if request.method == 'POST':
         flash('Product updated successfully!', 'success')
         return redirect(url_for('admin_dashboard'))
 
-    return render_template('edit_product.html', product=product)
+return render_template('edit_product.html', product=product)
 
-    @app.route('/rentals')
-    def rentals():
+@app.route('/rentals')
+def rentals():
             if 'user_id' not in session:
                 flash('You need to log in to view your rentals.', 'warning')
             return redirect(url_for('login'))
 
-    user_id = session['user_id']
-    user_rentals = Order.query.filter_by(user_id=user_id).all()
+user_id = session['user_id']
+user_rentals = Order.query.filter_by(user_id=user_id).all()
     
     return render_template('rentals.html', rentals=user_rentals)
 
