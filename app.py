@@ -219,7 +219,7 @@ def admin_register():
             flash('Username already exists. Please choose a different username.', 'danger')
 
     return render_template('admin_register.html')
-@app.route('/admin/delete_product/<init:id>',methods=['POST'])
+@app.route('/admin/delete_product/<int:id>',methods=['POST'])
 def delete_product(id):
     if 'admin_id' not in session:
         return redirect(url_for('admin_login'))
@@ -304,7 +304,7 @@ def return_rental(rental_id):
     flash(f'Rental {rental.product.name} returned successfully!', 'success')
     return redirect(url_for('rentals'))
 
-@app.route('/buy_product/<init:id>',methods=['GET','POST'])
+@app.route('/buy_product/<int:id>',methods=['GET','POST'])
 def buy_product(product_id):
     product= Product.query.get_or_404(productid)
     if request.method=='POST':
@@ -340,7 +340,7 @@ def buy_product(product_id):
     return render_template('buy_product.html',product=product)
 
 if __name__=='__main__':
-    app.run(debug=true)
+    app.run(debug=True)
 
     
 
