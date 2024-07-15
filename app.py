@@ -118,7 +118,8 @@ def admin_login():
         else:
             flash('Invalid admin username or password. Please try again.', 'danger')
 
-        return render_template('admin_login.html')
+    return render_template('admin_login.html')
+
 @app.route('/admin/logout')
 def admin_logout():
     session.pop('admin_id', None)
@@ -171,6 +172,7 @@ def add_product():
 
     return render_template('add_product.html')
 
+
 @app.route('/admin/edit_product/<int:id>', methods=['GET', 'POST'])
 def edit_product(id):
     if 'admin_id' not in session:
@@ -190,7 +192,7 @@ def edit_product(id):
             filename = secure_filename(image.filename)
             image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             product.image = filename  # Save just the filename
-            
+        
         db.session.commit()
         flash('Product updated successfully!', 'success')
         return redirect(url_for('admin_dashboard'))
@@ -304,20 +306,22 @@ def return_rental(rental_id):
     flash(f'Rental {rental.product.name} returned successfully!', 'success')
     return redirect(url_for('rentals'))
 
-@app.route('/buy_product/<int:id>',methods=['GET','POST'])
+@app.route('/buy_product/<int:product_id>', methods=['GET', 'POST'])
 def buy_product(product_id):
-    product= Product.query.get_or_404(productid)
-    if request.method=='POST':
+    product = Product.query.get_or_404(product_id)
+    
+    if request.method == 'POST':
         try:
-            end_date_str=request.form['end_date']
-            end_date=datetime.strptime(end_date_str,'%Y-%m-%d').date()
-            startdate=datetime.now().date()
-
-            if end_date<start_date:
-                flash('End date cannot be in the past','danger')
-                return redirect(url_for('buy_product',product_id=product.id))
-
+            end_date_str = request.form['end_date']
+            end_date = datetime.strptime(end_date_str, '%Y-%m-%d').date()
+            start_date = datetime.now().date()
+            
+            if end_date < start_date:
+                flash('End date cannot be in the past.', 'danger')
+                return redirect(url_for('buy_product', product_id=product.id))
+            
             total_cost = float(request.form['total_cost'])
+            
             new_order = Order(
                 user_id=session['user_id'],
                 product_id=product.id,
