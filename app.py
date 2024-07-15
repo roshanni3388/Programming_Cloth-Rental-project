@@ -49,8 +49,6 @@ class Order(db.Model):
     product = db.relationship('Product', backref=db.backref('orders', lazy=True))
     user = db.relationship('User', backref=db.backref('orders', lazy=True))
 
-
-
 # Routes
 @app.route('/')
 def home():
@@ -96,12 +94,13 @@ def login():
             flash('Invalid username or password. Please try again.', 'danger')
 
     return render_template('login.html')
+
 @app.route('/logout')
 def logout():
-        session.pop('user_id', None)
-        session.pop('admin_id', None)
-        flash('You have been logged out.', 'info')
-        return redirect(url_for('login'))
+    session.pop('user_id', None)
+    session.pop('admin_id', None)
+    flash('You have been logged out.', 'info')
+    return redirect(url_for('login'))
 
 @app.route('/admin/login', methods=['GET', 'POST'])
 def admin_login():
@@ -221,6 +220,7 @@ def admin_register():
             flash('Username already exists. Please choose a different username.', 'danger')
 
     return render_template('admin_register.html')
+
 @app.route('/admin/delete_product/<int:id>',methods=['POST'])
 def delete_product(id):
     if 'admin_id' not in session:
