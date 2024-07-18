@@ -299,7 +299,7 @@ def return_rental(rental_id):
         flash('You are not authorized to return this rental.', 'danger')
         return redirect(url_for('rentals'))
 
-    # Implement the return logic here : update or remove the rental
+    
     rental.status = 'Returned'
     db.session.commit()
 
