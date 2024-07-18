@@ -1,7 +1,7 @@
 #init_db.py
 from app import db
 from app import app
-from app import admin  #import other models as needed
+from app import Admin #import other models as needed
 def init_db():
     with app.app_context():
         db.drop_all() #drop existing tables
